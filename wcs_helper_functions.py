@@ -240,7 +240,7 @@ def readClabData(clabFilePath):
     return clab
 
 
-def plotValues(values, figx = 80, figy = 40):
+def plotValues(values, figx = 80, figy = 40, language='', ltype=''):
     """Takes a numpy array or matrix and produces a color map that shows variation in the values of the array/matrix."""
     """values: array or matrix of numbers
        figx: length of plot on the x axis, defaults to 10
@@ -260,7 +260,40 @@ def plotValues(values, figx = 80, figy = 40):
     #plot
     ha = 'center'
     fig = plt.figure(figsize=(figx,figy))
-    fig.suptitle('WCS chart', fontsize=80)
+    fig.suptitle('WCS chart: language '+language+" "+ltype, fontsize=80)
+    gs = gridspec.GridSpec(2, 2, width_ratios=[1, 8], height_ratios=[1,1]) 
+    ax1 = plt.subplot(gs[1])
+    ax2 = plt.subplot(gs[0])
+    core = values[10:].reshape((8, 40))
+    ax1.imshow(core, extent = [0, len(core[0]),len(core), 0], interpolation='none')
+    labels = ["B", "C", "D", "E", "F", "G", "H", "I"]
+    ax1.set_yticklabels(labels)
+    ax2.imshow([[i] for i in values[:10]], extent = [0, 0.5, 0, 10], interpolation='none')
+    ax1.yaxis.set(ticks=np.arange(0.5, len(labels)), ticklabels=labels)
+    ax2.yaxis.set(ticks=np.arange(0.5, len(["A"]+labels+["J"])), ticklabels=(["A"]+labels+["J"])[::-1])
+    ax1.xaxis.set(ticks=np.arange(0.5, 40), ticklabels=np.arange(1, 41))
+    
+def plotValues_two(values, figx = 80, figy = 40, language='', ltype=''):
+    """Takes a numpy array or matrix and produces a color map that shows variation in the values of the array/matrix."""
+    """values: array or matrix of numbers
+       figx: length of plot on the x axis, defaults to 10
+       figy: length of plot on the y axis, defaults to 10"""
+    #read in important information for reordering
+    plt.rc(['ytick', 'xtick'], labelsize=50)
+    cnumDictionary, cnameDictionary = readChipData('./WCS_data_core/chip.txt')
+    #reorder the given values
+    lst = [values[cnumDictionary['A0']-1], values[cnumDictionary['B0']-1], 
+       values[cnumDictionary['C0']-1], values[cnumDictionary['D0']-1], values[cnumDictionary['E0']-1],
+      values[cnumDictionary['F0']-1], values[cnumDictionary['G0']-1], values[cnumDictionary['H0']-1],
+      values[cnumDictionary['I0']-1], values[cnumDictionary['J0']-1]]
+    for letter in list(string.ascii_uppercase[1:9]):
+        for num in range(1, 41):
+            lst.append(values[cnumDictionary[letter+str(num)]-1])
+    values = np.array(lst)
+    #plot
+    ha = 'center'
+    fig = plt.figure(figsize=(figx,figy))
+    fig.suptitle('WCS chart '+language+" "+ltype, fontsize=80)
     gs = gridspec.GridSpec(2, 2, width_ratios=[1, 8], height_ratios=[1,1]) 
     ax1 = plt.subplot(gs[1])
     ax2 = plt.subplot(gs[0])
