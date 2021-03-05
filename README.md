@@ -1,2 +1,2 @@
 # COG260 World Color Survery Project
-A COG260 Project about constructing, training and testing prototype and exemplar models of categorization in the domain of color term categorization. Data taken from World Color Survery
+A Project about develiping, training and testing computational models of prototype and exemplar theories of categorization in the domain of color term categorization. Model was trained on data taken from World Color Survery using scikit-learn
